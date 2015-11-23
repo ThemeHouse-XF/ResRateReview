@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="ThemeHouse_ResRateReview" title="[⌂] Resource Rate and Review" version_string="1.0.0" version_id="1447261019" url="http://xf.themehouse.io/" install_callback_class="ThemeHouse_Install" install_callback_method="install" uninstall_callback_class="ThemeHouse_Install" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates/>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="controller_pre_dispatch" execute_order="10" callback_class="ThemeHouse_Listener_ControllerPreDispatch" callback_method="controllerPreDispatch" active="1" hint="" description=""/>
+    <listener event_id="file_health_check" execute_order="10" callback_class="ThemeHouse_ResRateReview_Listener_FileHealthCheck" callback_method="fileHealthCheck" active="1" hint="" description=""/>
+    <listener event_id="init_dependencies" execute_order="10" callback_class="ThemeHouse_Listener_InitDependencies" callback_method="initDependencies" active="1" hint="" description=""/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups/>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases/>
+  <route_prefixes/>
+  <style_properties/>
+  <templates>
+    <template title="th_resource_view_block_resratereview" version_id="1427357787" version_string="1.0.0"><![CDATA[<xen:if is="{$resource.canRateIfDownloaded}">
+	<xen:require css="rating.css" />
+	<xen:require js="js/themehouse/resratereview/rating.js" />
+	<div class="section" id="rateAndReview">
+		<div class="secondaryContent">
+			<h3>{xen:phrase rate_this_resource}</h3>
+		
+			<div>
+				<form action="{xen:link resources/rate, $resource}" method="post" class="AutoValidator">
+					<dl class="ctrlUnit pairs">
+						<dt>
+							{xen:phrase version_rating}:
+						</dt>
+						<dd>
+							<div><label class="RadioRating"><input type="radio" name="rating" value="1" /> <span class="rating"><span class="star Full"></span></span> <span class="hint muted">{xen:phrase rating_1}</span></label></div>
+							<div><label class="RadioRating"><input type="radio" name="rating" value="2" /> <span class="rating"><span class="star Full"></span><span class="star Full"></span></span> <span class="hint muted">{xen:phrase rating_2}</span></label></div>
+							<div><label class="RadioRating"><input type="radio" name="rating" value="3" /> <span class="rating"><span class="star Full"></span><span class="star Full"></span><span class="star Full"></span></span> <span class="hint muted">{xen:phrase rating_3}</span></label></div>
+							<div><label class="RadioRating"><input type="radio" name="rating" value="4" /> <span class="rating"><span class="star Full"></span><span class="star Full"></span><span class="star Full"></span><span class="star Full"></span></span> <span class="hint muted">{xen:phrase rating_4}</span></label></div>
+							<div><label class="RadioRating"><input type="radio" name="rating" value="5" /> <span class="rating"><span class="star Full"></span><span class="star Full"></span><span class="star Full"></span><span class="star Full"></span><span class="star Full"></span></span> <span class="hint muted">{xen:phrase rating_5}</span></label></div>
+						</dd>
+					</dl>
+					
+					<dl class="ctrlUnit pairs">
+						<dt>
+							{xen:phrase review}:
+							<xen:if is="!{$xenOptions.resourceReviewRequired}">({xen:phrase optional})</xen:if>
+						</dt>
+						<dd>
+							<textarea name="message" id="review_{$serverTime}_text" class="textCtrl Elastic fillSpace" rows="2"></textarea>
+						</dd>
+					</dl>
+					
+					<xen:if is="{$xenOptions.resourceAllowAnonReview}">
+						<dl class="ctrlUnit">
+							<dt></dt>
+							<dd><ul>
+								<li>
+									<label><input type="checkbox" name="is_anonymous" value="1" /> {xen:phrase submit_review_anonymously}</label>
+									<p class="explain">{xen:phrase if_selected_resource_creator_not_see_review_author}</p>
+								</li>
+							</ul></dd>
+						</dl>
+					</xen:if>
+				
+					<dl class="ctrlUnit submitUnit">
+						<dt></dt>
+						<dd>
+							<input type="submit" class="button primary" value="{xen:phrase submit_rating}" id="review_{$serverTime}_submit" />
+						</dd>
+					</dl>
+				
+					<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+					<input type="hidden" name="_xfConfirm" value="1" />
+				</form>
+			</div>
+		</div>
+	</div>
+</xen:if>]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="footer" modification_key="th_copyrightNotice_resRateReview" description="Copyright notice for [⌂] Resource Rate and Review" execution_order="1" enabled="1" action="callback">
+      <find><![CDATA[/{xen:phrase (?:xenforo|extra)_copyright}/]]></find>
+      <replace><![CDATA[ThemeHouse_Listener_InitDependencies::copyrightNotice]]></replace>
+    </modification>
+    <modification template="resource_view" modification_key="th_resourceView_resRateReview" description="Add 'Rate and Review' block." execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#<xen:hook name="resource_view_sidebar_below_discussion_button".*/>#Us]]></find>
+      <replace><![CDATA[${1}
+<xen:include template="th_resource_view_block_resratereview" />]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
